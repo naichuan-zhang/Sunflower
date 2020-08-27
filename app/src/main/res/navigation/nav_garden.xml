@@ -10,7 +10,22 @@
         android:name="com.naichuan.sunflower.HomeViewPagerFragment"
         android:label="HomeViewPagerFragment"
         tools:layout="@layout/fragment_view_pager">
-
+        <action
+            android:id="@+id/action_homeViewPagerFragment_to_plantDetailFragment"
+            app:destination="@id/plantDetailFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/plantDetailFragment"
+        android:name="com.naichuan.sunflower.PlantDetailFragment"
+        android:label="PlantDetailFragment"
+        tools:layout="@layout/fragment_plant_detail">
+        <argument
+            android:name="plantId"
+            app:argType="string" />
     </fragment>
 
 </navigation>
