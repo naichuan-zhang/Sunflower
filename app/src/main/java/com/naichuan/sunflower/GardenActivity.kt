@@ -10,6 +10,6 @@ class GardenActivity : BaseActivity<ActivityGardenBinding>() {
     }
 
     override fun initData() {
-        Toast.makeText(this, "Haha", Toast.LENGTH_SHORT).show()
+
     }
 }

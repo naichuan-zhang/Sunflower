@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 
-open class BaseFragment<B: ViewDataBinding>(
+abstract class BaseFragment<B: ViewDataBinding>(
     private val resId: Int
 ): Fragment(resId) {
 
@@ -18,12 +18,14 @@ open class BaseFragment<B: ViewDataBinding>(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return binding.root
+        return initBinding(binding)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initData()
     }
+
+    abstract fun initBinding(binding: B): View?
 
     protected open fun initData() {
         // init some common configs
