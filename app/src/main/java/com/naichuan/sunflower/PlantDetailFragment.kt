@@ -6,10 +6,13 @@ import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.app.ShareCompat
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import com.naichuan.sunflower.data.Plant
 import com.naichuan.sunflower.databinding.FragmentPlantDetailBinding
 import com.naichuan.sunflower.utils.InjectorUtils
@@ -28,15 +31,29 @@ class PlantDetailFragment : BaseFragment<FragmentPlantDetailBinding>(R.layout.fr
         binding.apply {
             viewModel = plantDetailViewModel
             lifecycleOwner = viewLifecycleOwner
-//            callback = object : Callback {
-//                override fun add(plant: Plant?) {
-//                    plant?.let {
-//                        hideAppBarFab(fab)
-//                        plantDetailViewModel.addPlantToGarden()
-//                        Snackbar.make(root, R.string.added_plant_to_garden, Snackbar.LENGTH_LONG).show()
-//                    }
-//                }
-//            }
+            callback = object : Callback {
+                override fun add(plant: Plant?) {
+                    plant?.let {
+                        hideAppBarFab(fab)
+                        plantDetailViewModel.addPlantToGarden()
+                        Snackbar.make(root, R.string.added_plant_to_garden, Snackbar.LENGTH_LONG).show()
+                    }
+                }
+            }
+            galleryNav.setOnClickListener {
+                navigateToGallery()
+            }
+            var isToolbarShown = false
+            plantDetailScrollview.setOnScrollChangeListener(
+                NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, _ ->
+                    val shouldShowToolbar = scrollY > toolbar.height
+                    if (isToolbarShown != shouldShowToolbar) {
+                        isToolbarShown = shouldShowToolbar
+                        appbar.isActivated = shouldShowToolbar
+                        toolbarLayout.isTitleEnabled = shouldShowToolbar
+                    }
+                }
+            )
         }
         binding.toolbar.setNavigationOnClickListener {
             it.findNavController().navigateUp()
@@ -69,6 +86,14 @@ class PlantDetailFragment : BaseFragment<FragmentPlantDetailBinding>(R.layout.fr
             .createChooserIntent()
             .addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
         startActivity(shareIntent)
+    }
+
+    private fun navigateToGallery() {
+        plantDetailViewModel.plant.value?.let {
+            val direction = PlantDetailFragmentDirections
+                .actionPlantDetailFragmentToGalleryFragment(it.name)
+            findNavController().navigate(direction)
+        }
     }
 
     private fun hideAppBarFab(fab: FloatingActionButton) {
